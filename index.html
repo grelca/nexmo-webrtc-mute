@@ -1,0 +1,60 @@
+<html>
+    <head>
+        <script src="./nexmoClient.js"></script>
+        <script type="application/javascript">
+            class VoipDevice {
+                constructor () {
+                    this.client = new NexmoClient({
+                        debug: true
+                    })
+
+                    this.started = false
+                }
+
+                start () {
+                    if (this.started) return alert('already started, refresh to try again')
+                    this.started = true
+
+                    this._login(token)
+                        .then(application => this._call(application))
+                        .catch(err => alert(err.message))
+                        .then(call => this.call = call)
+                }
+
+                _login (token) {
+                    return this.client.login(token)
+                }
+
+                _call (application) {
+                    return application.callServer(
+                        'user_identifier',
+                        'app'
+                    )
+                }
+
+                mute () {
+                    this.call?.conversation?.me?.mute(true)
+                }
+
+                unmute () {
+                    this.call?.conversation?.me?.mute(false)
+                }
+            }
+
+            const device = new VoipDevice()
+            let token = null
+
+            function setToken(event) {
+                token = event.value
+            }
+        </script>
+    </head>
+
+    <body>
+        Client JWT: <input type="text" onkeyup="setToken(this)" /><br /><br />
+
+        <a href="javascript:device.start();">Start Call</a><br />
+        <a href="javascript:device.mute();">Mute Call</a><br />
+        <a href="javascript:device.unmute();">Unmute Call</a>
+    </body>
+</html>
